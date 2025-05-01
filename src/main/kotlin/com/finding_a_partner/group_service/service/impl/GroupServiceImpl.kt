@@ -2,17 +2,21 @@ package com.finding_a_partner.group_service.service.impl
 
 import com.finding_a_partner.group_service.database.entity.Group
 import com.finding_a_partner.group_service.database.repository.GroupDao
+import com.finding_a_partner.group_service.enums.GroupRoleType
 import com.finding_a_partner.group_service.errors.ResourceNotFoundException
+import com.finding_a_partner.group_service.mappers.GroupMapper
+import com.finding_a_partner.group_service.model.request.GroupMembershipRequest
 import com.finding_a_partner.group_service.model.request.GroupRequest
 import com.finding_a_partner.group_service.model.response.GroupResponse
+import com.finding_a_partner.group_service.service.GroupMembershipService
 import com.finding_a_partner.group_service.service.GroupService
-import com.finding_a_partner.group_service.util.GroupMapper
 import org.springframework.stereotype.Service
 
 @Service
 class GroupServiceImpl(
     val dao: GroupDao,
     val mapper: GroupMapper,
+    val memberService: GroupMembershipService,
 ) : GroupService {
     override fun getAll(): List<GroupResponse> {
         println("get method")
@@ -21,6 +25,9 @@ class GroupServiceImpl(
 
     override fun getById(id: Long): GroupResponse =
         mapper.entityToResponse(dao.findById(id).orElseThrow { throw ResourceNotFoundException(id) })
+
+    override fun getEntityById(id: Long): Group =
+        dao.findById(id).orElseThrow { throw ResourceNotFoundException(id) }
 
     override fun update(id: Long, request: GroupRequest): GroupResponse {
         println("------------------------------update method")
@@ -32,13 +39,20 @@ class GroupServiceImpl(
         return mapper.entityToResponse(dao.save(entity))
     }
 
-    override fun create(request: GroupRequest): GroupResponse {
+    override fun create(request: GroupRequest, userId: Long): GroupResponse {
         println("------------------------------create method")
         val entity = Group(
             name = request.name,
             description = request.description,
+            creatorUserId = userId,
         )
-        return mapper.entityToResponse(dao.save(entity))
+        val savedEntity = dao.save(entity)
+        memberService.create(
+            groupId = savedEntity.id,
+            userId = savedEntity.creatorUserId,
+            request = GroupMembershipRequest(role = GroupRoleType.OWNER),
+        )
+        return mapper.entityToResponse(entity)
     }
 
     override fun delete(id: Long) {

@@ -6,11 +6,6 @@ import java.time.OffsetDateTime
 
 @MappedSuperclass
 abstract class AbstractEntity(
-//    @Id
-//    @GeneratedValue
-//    @Column(name = "id", updatable = false, nullable = false)
-//    val id: UUID = UUID.randomUUID(),
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)

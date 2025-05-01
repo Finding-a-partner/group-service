@@ -6,5 +6,6 @@ data class GroupResponse(
     val id: Long,
     val createdAt: OffsetDateTime,
     val name: String,
-    val description: String?
+    val description: String?,
+    val creatorUserId: Long,
 )

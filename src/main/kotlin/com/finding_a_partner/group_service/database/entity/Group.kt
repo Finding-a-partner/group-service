@@ -15,4 +15,7 @@ class Group(
     @Column
     @Lob
     var description: String?,
+
+    @Column(name = "creator_user_id", nullable = false)
+    val creatorUserId: Long,
 ) : AbstractEntity()

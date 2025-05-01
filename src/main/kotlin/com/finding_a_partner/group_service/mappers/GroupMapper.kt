@@ -1,4 +1,4 @@
-package com.finding_a_partner.group_service.util
+package com.finding_a_partner.group_service.mappers
 
 import com.finding_a_partner.group_service.database.entity.Group
 import com.finding_a_partner.group_service.model.response.GroupResponse
@@ -12,5 +12,6 @@ class GroupMapper {
             createdAt = entity.createdAt,
             name = entity.name,
             description = entity.description,
+            creatorUserId = entity.creatorUserId
         )
 }

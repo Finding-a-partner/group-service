@@ -1,5 +1,6 @@
 package com.finding_a_partner.group_service.database.entity
 
+import com.finding_a_partner.group_service.enums.GroupRoleType
 import jakarta.persistence.*
 import java.time.OffsetDateTime
 
@@ -17,11 +18,10 @@ data class GroupMembership(
     @Column(name = "user_id", insertable = false, updatable = false)
     val userId: Long,
 
-    @ManyToOne
-    @JoinColumn(name = "role_id", nullable = false)
-    var roleId: GroupRole,
+    @Column
+    @Enumerated(EnumType.STRING)
+    var role: GroupRoleType = GroupRoleType.MEMBER,
 
     @Column(name = "created_at")
     val createdAt: OffsetDateTime = OffsetDateTime.now(),
-
 )
