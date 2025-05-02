@@ -5,10 +5,12 @@ import com.finding_a_partner.group_service.database.entity.GroupMembershipId
 import com.finding_a_partner.group_service.database.repository.GroupDao
 import com.finding_a_partner.group_service.database.repository.GroupMembershipDao
 import com.finding_a_partner.group_service.errors.ResourceNotFoundException
+import com.finding_a_partner.group_service.mappers.GroupMembershipMapper
 import com.finding_a_partner.group_service.model.request.GroupMembershipRequest
+import com.finding_a_partner.group_service.model.response.GroupMemberResponse
 import com.finding_a_partner.group_service.model.response.GroupMembershipResponse
 import com.finding_a_partner.group_service.service.GroupMembershipService
-import com.finding_a_partner.group_service.mappers.GroupMembershipMapper
+import com.finding_a_partner.group_service.service.UserService
 import org.springframework.stereotype.Service
 
 @Service
@@ -16,14 +18,27 @@ class GroupMembershipServiceImpl(
     val dao: GroupMembershipDao,
     val mapper: GroupMembershipMapper,
     val groupDao: GroupDao,
+    val userService: UserService,
 ) : GroupMembershipService {
     override fun getAll(): List<GroupMembershipResponse> =
         dao.findAll().map { mapper.entityToResponse(it) }
 
-    override fun getAllByGroupId(groupId: Long): List<GroupMembershipResponse> {
+    override fun getAllByGroupId(groupId: Long): List<GroupMemberResponse> {
         groupDao.findById(groupId).orElseThrow { throw ResourceNotFoundException(groupId) }
 
-        return dao.findAllByIdGroupId(groupId).map { mapper.entityToResponse(it) }
+        val memberships = dao.findAllByIdGroupId(groupId)
+        val userIds = memberships.map { it.userId }
+
+        val userInfo = userService.getUsersByIds(userIds)
+
+        return memberships.map { membership ->
+            val user = userInfo.find { it.id == membership.userId }
+            GroupMemberResponse(
+                userId = membership.userId,
+                name = user?.name,
+                role = membership.role,
+            )
+        }
     }
 
     override fun update(groupId: Long, userId: Long, request: GroupMembershipRequest): GroupMembershipResponse {

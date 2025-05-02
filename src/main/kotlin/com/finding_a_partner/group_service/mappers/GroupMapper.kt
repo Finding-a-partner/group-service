@@ -12,6 +12,6 @@ class GroupMapper {
             createdAt = entity.createdAt,
             name = entity.name,
             description = entity.description,
-            creatorUserId = entity.creatorUserId
+            creatorUserId = entity.creatorUserId,
         )
 }
