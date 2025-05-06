@@ -5,28 +5,31 @@ import com.finding_a_partner.group_service.service.GroupMembershipService
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/groups/{groupId}/member")
+@RequestMapping("/groups")
 class GroupMembershipController(
     val service: GroupMembershipService,
 ) {
-    @GetMapping()
+    @GetMapping("/{groupId}/member")
     fun getById(@PathVariable("groupId") groupId: Long) = service.getAllByGroupId(groupId)
 
-    @PutMapping()
+    @GetMapping("/{userId}/group")
+    fun getByUserId(@PathVariable("userId") groupId: Long) = service.getAllByUserId(groupId)
+
+    @PutMapping("/{groupId}/member")
     fun update(
         @PathVariable("groupId") groupId: Long,
         @RequestHeader("X-User-Id") userId: Long,
         @RequestBody request: GroupMembershipRequest,
     ) = service.update(groupId, userId, request)
 
-    @PostMapping
+    @PostMapping("/{groupId}/member")
     fun create(
         @PathVariable("groupId") groupId: Long,
         @RequestHeader("X-User-Id") userId: Long,
         @RequestBody request: GroupMembershipRequest,
     ) = service.create(groupId, userId, request)
 
-    @DeleteMapping()
+    @DeleteMapping("/{groupId}/member")
     fun delete(
         @PathVariable("groupId") groupId: Long,
         @RequestHeader("X-User-Id") userId: Long,

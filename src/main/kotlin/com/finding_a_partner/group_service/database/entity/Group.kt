@@ -9,8 +9,7 @@ class Group(
     @Column(nullable = false, unique = true)
     var name: String,
 
-    @Column
-    @Lob
+    @Column(columnDefinition = "text")
     var description: String?,
 
     @Column(name = "creator_user_id", nullable = false)

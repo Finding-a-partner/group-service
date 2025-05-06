@@ -5,10 +5,12 @@ import com.finding_a_partner.group_service.database.entity.GroupMembershipId
 import com.finding_a_partner.group_service.database.repository.GroupDao
 import com.finding_a_partner.group_service.database.repository.GroupMembershipDao
 import com.finding_a_partner.group_service.errors.ResourceNotFoundException
+import com.finding_a_partner.group_service.mappers.GroupMapper
 import com.finding_a_partner.group_service.mappers.GroupMembershipMapper
 import com.finding_a_partner.group_service.model.request.GroupMembershipRequest
 import com.finding_a_partner.group_service.model.response.GroupMemberResponse
 import com.finding_a_partner.group_service.model.response.GroupMembershipResponse
+import com.finding_a_partner.group_service.model.response.GroupResponse
 import com.finding_a_partner.group_service.service.GroupMembershipService
 import com.finding_a_partner.group_service.service.UserService
 import org.springframework.stereotype.Service
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service
 class GroupMembershipServiceImpl(
     val dao: GroupMembershipDao,
     val mapper: GroupMembershipMapper,
+    val groupMapper: GroupMapper,
     val groupDao: GroupDao,
     val userService: UserService,
 ) : GroupMembershipService {
@@ -39,6 +42,11 @@ class GroupMembershipServiceImpl(
                 role = membership.role,
             )
         }
+    }
+
+    override fun getAllByUserId(userId: Long): List<GroupResponse> {
+        val memberships = dao.findAllWithGroupByUserId(userId)
+        return memberships.map { groupMapper.entityToResponse(it.group) }
     }
 
     override fun update(groupId: Long, userId: Long, request: GroupMembershipRequest): GroupMembershipResponse {
