@@ -1,15 +1,12 @@
 package com.finding_a_partner.group_service.database.entity
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Lob
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import java.util.*
 
 @Entity
 @Table(name = "groups")
 class Group(
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     var name: String,
 
     @Column

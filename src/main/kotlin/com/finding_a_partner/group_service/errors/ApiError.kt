@@ -1,11 +1,11 @@
 package com.finding_a_partner.group_service.errors
 
-import org.springframework.http.HttpStatus
-import java.time.LocalDateTime
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.finding_a_partner.group_service.logging.FreelancingLogger
+import org.springframework.http.HttpStatus
+import java.time.LocalDateTime
 
 @JsonIgnoreProperties("localizedMessage", "cause", "stackTrace", "suppressed")
 open class ApiError(

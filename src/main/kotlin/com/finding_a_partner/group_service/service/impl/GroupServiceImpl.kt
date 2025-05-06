@@ -19,7 +19,6 @@ class GroupServiceImpl(
     val memberService: GroupMembershipService,
 ) : GroupService {
     override fun getAll(): List<GroupResponse> {
-        println("get method")
         return dao.findAll().map { mapper.entityToResponse(it) }
     }
 
@@ -30,7 +29,6 @@ class GroupServiceImpl(
         dao.findById(id).orElseThrow { throw ResourceNotFoundException(id) }
 
     override fun update(id: Long, request: GroupRequest): GroupResponse {
-        println("------------------------------update method")
         val entity = dao.findById(id).orElseThrow { throw ResourceNotFoundException(id) }
             .apply {
                 name = request.name
@@ -40,7 +38,6 @@ class GroupServiceImpl(
     }
 
     override fun create(request: GroupRequest, userId: Long): GroupResponse {
-        println("------------------------------create method")
         val entity = Group(
             name = request.name,
             description = request.description,
@@ -52,11 +49,10 @@ class GroupServiceImpl(
             userId = savedEntity.creatorUserId,
             request = GroupMembershipRequest(role = GroupRoleType.OWNER),
         )
-        return mapper.entityToResponse(entity)
+        return mapper.entityToResponse(savedEntity)
     }
 
     override fun delete(id: Long) {
-        println("------------------------------delete method")
         val entity = dao.findById(id).orElseThrow { throw ResourceNotFoundException(id) }
         dao.delete(entity)
     }
